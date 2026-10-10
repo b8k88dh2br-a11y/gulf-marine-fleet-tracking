@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gulf Marine Fleet Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            margin-top: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        th {
+            background: #eef2ff;
+        }
+        .status {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .status-arrived { background: #dcfce7; color: #166534; }
+        .status-in-transit { background: #dbeafe; color: #1d4ed8; }
+        .status-departed { background: #fef3c7; color: #92400e; }
+        .status-idle { background: #f3f4f6; color: #374151; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Gulf Marine Fleet Dashboard</h1>
+            <p>Monitor trucks, geofences, and manager alert activity.</p>
+        </div>
+
+        <div class="card">
+            <h2>Trucks</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Plate</th>
+                        <th>Driver</th>
+                        <th>Last GPS</th>
+                        <th>Geofence</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for truck in trucks %}
+                    <tr>
+                        <td>{{ truck.name }}</td>
+                        <td>{{ truck.plate_number }}</td>
+                        <td>{{ truck.driver_name }}</td>
+                        <td>{{ truck.last_latitude }}, {{ truck.last_longitude }}</td>
+                        <td>{{ truck.last_geofence or 'None' }}</td>
+                        <td>
+                            <span class="status status-{{ truck.status.lower().replace('_', '-') if truck.status else 'idle' }}">
+                                {{ truck.status or 'IDLE' }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Geofences</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Radius (m)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for geofence in geofences %}
+                    <tr>
+                        <td>{{ geofence.name }}</td>
+                        <td>{{ geofence.latitude }}</td>
+                        <td>{{ geofence.longitude }}</td>
+                        <td>{{ geofence.radius_meters }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Recent Alerts</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Truck</th>
+                        <th>Type</th>
+                        <th>Message</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alert in alerts %}
+                    <tr>
+                        <td>{{ alert.truck_name }}</td>
+                        <td>{{ alert.alert_type }}</td>
+                        <td>{{ alert.message }}</td>
+                        <td>{{ alert.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
